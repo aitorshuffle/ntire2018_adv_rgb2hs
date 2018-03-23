@@ -1,0 +1,29 @@
+ENVI
+description = {
+  File Imported into ENVI}
+samples = 1392
+lines = 1300
+bands = 31
+header offset = 0
+file type = ENVI
+data type = 12
+interleave = bsq
+sensor type = Specim Hyperspectral Sensor, SW ver 3.6218722
+byte order = 0
+acquisition date = DATE(dd-mm-yyyy): 11-04-2013
+default bands = { 5 , 15 , 25 }
+vimg = { 1 , 519 }
+qpftiming = { 140.99 , 58531.68 }
+binning = { 2 , 1 }
+tint = 30.0
+wavelength = { 400.0 , 410.0 , 420.0 , 430.0 , 440.0 , 450.0 , 460.0 , 470.0 , 480.0 , 490.0 , 500.0 , 510.0 , 520.0 , 530.0 , 540.0 , 550.0 , 560.0 , 570.0 , 580.0 , 590.0 , 600.0 , 610.0 , 620.0 , 630.0 , 640.0 , 650.0 , 660.0 , 670.0 , 680.0 , 690.0 , 700.0 }
+fwhm = { 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 , 10.0 }
+errors = { none }
+y start = 0
+fps = 25.00
+x start = 0
+vroi = { 1 , 31 }
+sensorid = 540010
+himg = { 1 , 1392 }
+fodis = { 0 , 0 }
+hroi = { 1 , 1392 }
