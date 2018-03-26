@@ -23,9 +23,9 @@ class BaseOptions():
         self.parser.add_argument('--n_layers_D', type=int, default=3, help='only used if which_model_netD==n_layers')
         self.parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
         self.parser.add_argument('--name', type=str, default='experiment_name', help='name of the experiment. It decides where to store samples and models')
-        self.parser.add_argument('--dataset_mode', type=str, default='unaligned', help='chooses how datasets are loaded. [unaligned | aligned | single]')
-        self.parser.add_argument('--model', type=str, default='cycle_gan',
-                                 help='chooses which model to use. cycle_gan, pix2pix, test')
+        self.parser.add_argument('--dataset_mode', type=str, default='rgb2hs', help='chooses how datasets are loaded. [rgb2hs]')
+        self.parser.add_argument('--model', type=str, default='pix2pix',
+                                 help='chooses which model to use. pix2pix, test')
         self.parser.add_argument('--which_direction', type=str, default='AtoB', help='AtoB or BtoA')
         self.parser.add_argument('--nThreads', default=2, type=int, help='# threads for loading data')
         self.parser.add_argument('--checkpoints_dir', type=str, default='./checkpoints', help='models are saved here')

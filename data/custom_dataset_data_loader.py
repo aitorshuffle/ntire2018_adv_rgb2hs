@@ -4,16 +4,7 @@ from data.base_data_loader import BaseDataLoader
 
 def CreateDataset(opt):
     dataset = None
-    if opt.dataset_mode == 'aligned':
-        from data.aligned_dataset import AlignedDataset
-        dataset = AlignedDataset()
-    elif opt.dataset_mode == 'unaligned':
-        from data.unaligned_dataset import UnalignedDataset
-        dataset = UnalignedDataset()
-    elif opt.dataset_mode == 'single':
-        from data.single_dataset import SingleDataset
-        dataset = SingleDataset()
-    elif opt.dataset_mode == 'rgb2hs':
+    if opt.dataset_mode == 'rgb2hs':
         from data.icvl_dataset import IcvlNtire2018Dataset
         dataset = IcvlNtire2018Dataset()
     else:
