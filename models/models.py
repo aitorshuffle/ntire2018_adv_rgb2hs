@@ -2,13 +2,9 @@ def create_model(opt):
     model = None
     print(opt.model)
     if opt.model == 'pix2pix':
-        assert(opt.dataset_mode == 'aligned' or opt.dataset_mode == 'rgb2hs')
+        assert(opt.dataset_mode == 'rgb2hs')
         from .pix2pix_model import Pix2PixModel
         model = Pix2PixModel()
-    elif opt.model == 'test':
-        assert(opt.dataset_mode == 'single')
-        from .test_model import TestModel
-        model = TestModel()
     else:
         raise ValueError("Model [%s] not recognized." % opt.model)
     model.initialize(opt)
