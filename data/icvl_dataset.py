@@ -88,41 +88,43 @@ class IcvlNtire2018Dataset(BaseDataset):
             rgb_crop = transforms.ToTensor()(rgb_crop)
 
         ## load hs image
-        path_hs = self.paths_hs[index]
-        if self.use_envi:
-            hs = spectral.io.envi.open(path_hs) # https://github.com/spectralpython/spectral/blob/master/spectral/io/envi.py#L282  not loaded yet until read_subregion
-            # hs.shape: Out[3]: (1392, 1300, 31) (nrows, ncols, nbands)
-            # check dimensions and crop hs image (actually read only that one
-            # print(rgb.shape)
-            # print(hs.shape)
-            assert (rgb.shape[1] == hs.shape[0] and rgb.shape[2] == hs.shape[1])
-            hs_crop = (hs.read_subregion(row_bounds=(h_offset, h_offset + self.opt.fineSize), col_bounds=(w_offset, w_offset + self.opt.fineSize))).astype(float)
-            # hs_crop.shape = (h,w,c)=(256,256,31) here
-            hs_crop = hs_crop / 4095. * 255  # 4096: db max. totensor expects in [0, 255]
-            hs_crop = transforms.ToTensor()(hs_crop)  # convert ndarray (h,w,c) [0,255]-> torch tensor (c,h,w) [0.0, 1.0]  #move to GPU only the 256,256 crop!good!
-        else:
-            mat = h5py.File(path_hs)  # b[{'rgb', 'bands', 'rad'}]  # Shape: (Bands, Cols, Rows) <-> (bands, samples, lines)
-            hs = mat['rad'].value  #  ndarray (c,w,h)
-            hs = np.transpose(hs)  # reverse axis order. ndarray (h,w,c). totensor expects this shape
-            hs = hs / 4095. * 255  #4096: db max. totensor expects in [0, 255]
-
-            hs = transforms.ToTensor()(hs)  # convert ndarray (h,w,c) [0,255] -> torch tensor (c,h,w) [0.0, 1.0]  #fixme why move everything and not only the crop to the gpu?
-
-            # check dimensions and crop hs image
-            # assert(rgb.shape[1] == hs.shape[1] and rgb.shape[2] == hs.shape[2])
-            if self.opt.phase == 'train':
-                # train on random crops
-                hs_crop = hs[:, h_offset:h_offset + self.opt.fineSize, w_offset:w_offset + self.opt.fineSize]
+        if self.opt.phase == 'train':
+            path_hs = self.paths_hs[index]
+            if self.use_envi:
+                hs = spectral.io.envi.open(path_hs) # https://github.com/spectralpython/spectral/blob/master/spectral/io/envi.py#L282  not loaded yet until read_subregion
+                # hs.shape: Out[3]: (1392, 1300, 31) (nrows, ncols, nbands)
+                # check dimensions and crop hs image (actually read only that one
+                # print(rgb.shape)
+                # print(hs.shape)
+                assert (rgb.shape[1] == hs.shape[0] and rgb.shape[2] == hs.shape[1])
+                hs_crop = (hs.read_subregion(row_bounds=(h_offset, h_offset + self.opt.fineSize), col_bounds=(w_offset, w_offset + self.opt.fineSize))).astype(float)
+                # hs_crop.shape = (h,w,c)=(256,256,31) here
+                hs_crop = hs_crop / 4095. * 255  # 4096: db max. totensor expects in [0, 255]
+                hs_crop = transforms.ToTensor()(hs_crop)  # convert ndarray (h,w,c) [0,255]-> torch tensor (c,h,w) [0.0, 1.0]  #move to GPU only the 256,256 crop!good!
             else:
-                # Validate or Test
-                hs_crop = hs #will pad on the net
-                # topdown_pad = (1536 - 1392) // 2
-                # leftright_pad = (1536 - 1300) // 2
-                # hs_crop = F.pad(hs, (leftright_pad, leftright_pad, topdown_pad, topdown_pad))
+                mat = h5py.File(path_hs)  # b[{'rgb', 'bands', 'rad'}]  # Shape: (Bands, Cols, Rows) <-> (bands, samples, lines)
+                hs = mat['rad'].value  #  ndarray (c,w,h)
+                hs = np.transpose(hs)  # reverse axis order. ndarray (h,w,c). totensor expects this shape
+                hs = hs / 4095. * 255  #4096: db max. totensor expects in [0, 255]
+
+                hs = transforms.ToTensor()(hs)  # convert ndarray (h,w,c) [0,255] -> torch tensor (c,h,w) [0.0, 1.0]  #fixme why move everything and not only the crop to the gpu?
+
+                # check dimensions and crop hs image
+                # assert(rgb.shape[1] == hs.shape[1] and rgb.shape[2] == hs.shape[2])
+                if self.opt.phase == 'train':
+                    # train on random crops
+                    hs_crop = hs[:, h_offset:h_offset + self.opt.fineSize, w_offset:w_offset + self.opt.fineSize]
+                else:
+                    # Validate or Test
+                    hs_crop = hs #will pad on the net
+                    # topdown_pad = (1536 - 1392) // 2
+                    # leftright_pad = (1536 - 1300) // 2
+                    # hs_crop = F.pad(hs, (leftright_pad, leftright_pad, topdown_pad, topdown_pad))
 
 
         rgb_crop = transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))(rgb_crop)  #fixme still valid in icvl?
-        hs_crop = transforms.Normalize(tuple([0.5] * 31), tuple([0.5] * 31))(hs_crop)
+        if self.opt.phase == 'train':
+            hs_crop = transforms.Normalize(tuple([0.5] * 31), tuple([0.5] * 31))(hs_crop)
 
         if self.opt.which_direction == 'BtoA':
             input_nc = self.opt.output_nc
@@ -135,18 +137,27 @@ class IcvlNtire2018Dataset(BaseDataset):
             idx = [i for i in range(rgb_crop.size(2) - 1, -1, -1)]
             idx = torch.LongTensor(idx)
             rgb_crop = rgb_crop.index_select(2, idx)
-            hs_crop = hs_crop.index_select(2, idx)
+            if self.opt.phase == 'train':
+                hs_crop = hs_crop.index_select(2, idx)
 
         if input_nc == 1:  # RGB to gray
             tmp = rgb_crop[0, ...] * 0.299 + rgb_crop[1, ...] * 0.587 + rgb_crop[2, ...] * 0.114
             rgb_crop = tmp.unsqueeze(0)
 
-        if output_nc == 1:  # RGB to gray
-            tmp = hs_crop[0, ...] * 0.299 + hs_crop[1, ...] * 0.587 + hs_crop[2, ...] * 0.114
-            hs_crop = tmp.unsqueeze(0)
+        if self.opt.phase == 'train':
+            if output_nc == 1:  # RGB to gray
+                tmp = hs_crop[0, ...] * 0.299 + hs_crop[1, ...] * 0.587 + hs_crop[2, ...] * 0.114
+                hs_crop = tmp.unsqueeze(0)
 
-        return_dict =  {'A': rgb_crop, 'B': hs_crop,
+        if self.opt.phase == 'train':
+            return_dict = {'A': rgb_crop, 'B': hs_crop,
                         'A_paths': path_rgb, 'B_paths': path_hs}
+
+        else:
+            # we just use the rgb paths instead, won't use them anyway. nasty, I know
+            return_dict = {'A': rgb_crop, 'B': rgb_crop,
+                           'A_paths': path_rgb, 'B_paths': path_rgb}
+
         if self.opt.phase == 'Validate' or self.opt.phase == 'Test':
             return_dict['full_img_padding'] = full_img_padding
 

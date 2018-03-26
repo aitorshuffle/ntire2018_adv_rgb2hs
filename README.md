@@ -1,3 +1,8 @@
+# Requirements
+
+* python 3.6
+* Python packages: pytorch
+
 # Execution instructions
 
 * Download the code
@@ -7,9 +12,23 @@ $ git clone https://github.com/aitorshuffle/ntire2018_adv_rgb2hs.git
 $ cd ntire2018_adv_rgb2hs
 ```
 
-* Place the input RGB image in the ```datasets/icvl_ntire2018/NTIRE2018_Test_Clean/``` or ```datasets/icvl_ntire2018/NTIRE2018_Test_RealWorld``` directory
+* Place the input RGB images to be processed in the ```datasets/icvl_ntire2018/NTIRE2018_Test_Clean/``` and/or ```datasets/icvl_ntire2018/NTIRE2018_Test_RealWorld``` directory
 
 * Run the rgb to hyperspectral conversion:
-```
-ntire2018_adv_rgb2hs$ python test.py --dataroot ./datasets/icvl_ntire2018 --name 29 --challenge Clean --phase Test --output_nc 31 --model pix2pix --which_model_netG pbdl2017PrunedTo3 --which_direction AtoB --dataset_mode rgb2hs --norm batch --gpu_ids 0
-```
+
+	* Make the execution scripts executable: 
+	```
+	ntire2018_adv_rgb2hs$ chmod 777 ./scripts/test_ntire2018_adv_rgb2hs_Clean.sh
+	ntire2018_adv_rgb2hs$ chmod 777 ./scripts/test_ntire2018_adv_rgb2hs_RealWorld.sh
+	```
+	
+	* Run the execution script for each track: 
+        * Clean track:
+        ```
+        ntire2018_adv_rgb2hs$ ./scripts/test_ntire2018_adv_rgb2hs_clean.sh 
+        ```
+
+        * RealWorld track:
+        ```
+        ntire2018_adv_rgb2hs$ ./scripts/test_ntire2018_adv_rgb2hs_clean.sh
+        ```
