@@ -32,3 +32,13 @@ $ cd ntire2018_adv_rgb2hs
         ```
         ntire2018_adv_rgb2hs$ ./scripts/test_ntire2018_adv_rgb2hs_clean.sh
         ```
+* Output results will be generated in:
+    * Clean track: ```results/29```
+    * RealWorld track: ```results/34```
+    Each of these contain an images directory, with the predicted hyperspectral mat file in the required format and one RGB image triplet per test image:
+    	 * ```TEST_IMG_NAME.mat```: predicted hyperspectral mat file 
+         * ```TEST_IMG_NAME_real_A.png```: input RGB image
+         * ```TEST_IMG_NAME_fake_B.png```: predicted hyperspectral image rendered as sRGB
+         * ```TEST_IMG_NAME_real_B.png```: Ground truth hyperspectral image rendered as sRGB. Only makes sense for validation. At test time
+	There will also be a ```index.html``` web page rendering all the mentioned rgb triplets.          
+    
