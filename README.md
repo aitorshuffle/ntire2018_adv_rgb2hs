@@ -1,7 +1,7 @@
 # Requirements
 
 * python 3.6
-* Python packages: pytorch
+* Python packages: pytorch (torch, torchvision), skimage, spectral, colour, numpy, h5py, PIL, dominate, scipy, hdf5storage, tqdm, joblib 
 
 # Execution instructions
 
